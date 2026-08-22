@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const Company = require("../models/Company");
 const Employee = require("../models/Employee");
 const { generateLoginId, companyCodeFrom } = require("../utils/loginId");
+const { seedCompanyDefaults, ensureAllocations } = require("../seed/companyDefaults");
 const httpError = require("../utils/httpError");
 
 const PASSWORD_MIN_LENGTH = 8;
@@ -83,6 +84,9 @@ async function registerCompany(req, res) {
     await admin.setPassword(password);
     await admin.save();
 
+    await seedCompanyDefaults(company._id, joiningDate.getFullYear());
+    await ensureAllocations(company._id, admin._id, joiningDate.getFullYear());
+
     res.status(201).json({ token: signToken(admin), company, user: admin });
   } catch (err) {
     await Company.deleteOne({ _id: company._id });
@@ -117,4 +121,53 @@ async function login(req, res) {
   });
 }
 
-module.exports = { registerCompany, login };
+async function me(req, res) {
+  const employee = await Employee.findById(req.user.id)
+    .populate("company", "name code logoUrl settings")
+    .populate("department", "name")
+    .populate("manager", "firstName lastName avatarUrl");
+
+  if (!employee) {
+    throw httpError(404, "Account not found");
+  }
+
+  res.json({ user: employee });
+}
+
+async function changePassword(req, res) {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    throw httpError(400, "currentPassword and newPassword are required");
+  }
+
+  if (newPassword.length < PASSWORD_MIN_LENGTH) {
+    throw httpError(400, `Password must be at least ${PASSWORD_MIN_LENGTH} characters`);
+  }
+
+  if (confirmPassword !== undefined && newPassword !== confirmPassword) {
+    throw httpError(400, "Passwords do not match");
+  }
+
+  if (currentPassword === newPassword) {
+    throw httpError(400, "New password must be different from the current password");
+  }
+
+  const employee = await Employee.findById(req.user.id).select("+passwordHash");
+
+  if (!employee) {
+    throw httpError(404, "Account not found");
+  }
+
+  if (!(await employee.verifyPassword(currentPassword))) {
+    throw httpError(401, "Current password is incorrect");
+  }
+
+  await employee.setPassword(newPassword);
+  employee.mustChangePassword = false;
+  await employee.save();
+
+  res.json({ message: "Password updated", user: employee });
+}
+
+module.exports = { registerCompany, login, me, changePassword };

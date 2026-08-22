@@ -1,7 +1,14 @@
 function errorHandler(err, req, res, next) {
   if (err.code === 11000) {
-    const field = Object.keys(err.keyPattern || {})[0] || "value";
+    const keys = Object.keys(err.keyPattern || {});
+    const meaningful = keys.filter((key) => key !== "company");
+    const field = (meaningful.length ? meaningful : keys).join(" + ") || "value";
+
     return res.status(409).json({ message: `${field} is already in use` });
+  }
+
+  if (err.name === "CastError") {
+    return res.status(400).json({ message: `Invalid ${err.path}: ${err.value}` });
   }
 
   if (err.name === "ValidationError") {
