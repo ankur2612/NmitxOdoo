@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test:e2e": "bash test/e2e.sh"
+    "test:e2e": "bash test/e2e.sh",
+    "seed:demo": "node seed/demo.js"
   },
   "author": "",
   "license": "ISC",
