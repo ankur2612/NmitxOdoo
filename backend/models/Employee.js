@@ -54,7 +54,7 @@ const employeeSchema = new mongoose.Schema(
     isActive: { type: Boolean, default: true },
 
     firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
+    lastName: { type: String, default: "", trim: true },
     avatarUrl: { type: String, default: "" },
     jobPosition: { type: String, default: "" },
     department: { type: mongoose.Schema.Types.ObjectId, ref: "Department" },
@@ -79,7 +79,7 @@ const employeeSchema = new mongoose.Schema(
 );
 
 employeeSchema.virtual("fullName").get(function () {
-  return `${this.firstName} ${this.lastName}`;
+  return [this.firstName, this.lastName].filter(Boolean).join(" ");
 });
 
 employeeSchema.methods.setPassword = async function (plainPassword) {
