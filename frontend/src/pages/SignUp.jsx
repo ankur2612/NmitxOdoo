@@ -141,7 +141,7 @@ export default function SignUp() {
         });
       }
 
-      navigate("/", { replace: true });
+      navigate("/employees", { replace: true });
     } catch (error) {
       setFormError(readError(error));
     } finally {
