@@ -42,3 +42,10 @@ export function fullName(employee) {
 
   return [employee.firstName, employee.lastName].filter(Boolean).join(" ");
 }
+
+export function formatHours(value) {
+  const minutes = Math.max(0, Math.round((Number(value) || 0) * 60));
+  const hours = Math.floor(minutes / 60);
+
+  return `${String(hours).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+}

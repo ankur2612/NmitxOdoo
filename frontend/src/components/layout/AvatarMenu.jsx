@@ -67,6 +67,17 @@ export default function AvatarMenu() {
             My Profile
           </Link>
 
+          {user?.role === "admin" && (
+            <Link
+              to="/settings"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block px-3 py-2 text-ink-dim transition-colors duration-150 hover:bg-surface hover:text-ink focus:outline-none focus-visible:bg-surface"
+            >
+              Settings
+            </Link>
+          )}
+
           <button
             type="button"
             role="menuitem"

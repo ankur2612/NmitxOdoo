@@ -50,7 +50,7 @@ export default function SignIn() {
 
     try {
       const result = await signIn(identifier, password);
-      navigate(result.mustChangePassword ? "/profile?tab=security" : "/employees", { replace: true });
+      navigate(result.mustChangePassword ? "/change-password" : "/employees", { replace: true });
     } catch (error) {
       setFormError(readError(error));
       passwordRef.current.focus();

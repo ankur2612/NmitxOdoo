@@ -44,7 +44,7 @@ const ADMIN_PATHS = [
 ];
 
 export default function ProfileView({ employee, isSelf, onSaved }) {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const isAdmin = user?.role === "admin";
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -327,7 +327,7 @@ export default function ProfileView({ employee, isSelf, onSaved }) {
           />
         )}
         {active === "salary" && <SalaryTab employeeId={employee._id} canEdit={isAdmin} />}
-        {active === "security" && <SecurityTab />}
+        {active === "security" && <SecurityTab onChanged={refreshUser} />}
       </div>
     </>
   );

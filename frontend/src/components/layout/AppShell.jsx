@@ -24,7 +24,7 @@ export default function AppShell() {
   return (
     <div className="min-h-dvh">
       <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-[86rem] items-center gap-6 px-5 sm:px-7">
+        <div className="mx-auto flex max-w-[86rem] flex-wrap items-center gap-x-5 px-5 sm:flex-nowrap sm:gap-x-6 sm:px-7">
           <NavLink
             to="/employees"
             className="flex shrink-0 items-center gap-2 rounded-sm py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
@@ -45,7 +45,10 @@ export default function AppShell() {
             </span>
           </NavLink>
 
-          <nav aria-label="Main" className="flex min-w-0 flex-1 items-center gap-6 overflow-x-auto">
+          <nav
+            aria-label="Main"
+            className="order-last flex w-full items-center gap-6 border-t border-line sm:order-none sm:w-auto sm:flex-1 sm:border-t-0"
+          >
             {TABS.map((tab) => (
               <NavLink key={tab.to} to={tab.to} className={tabClass}>
                 {tab.label}
@@ -53,7 +56,7 @@ export default function AppShell() {
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-4">
+          <div className="ml-auto flex shrink-0 items-center gap-3 py-2 sm:order-last sm:ml-0 sm:gap-4 sm:py-0">
             <CheckInWidget />
             <AvatarMenu />
           </div>
